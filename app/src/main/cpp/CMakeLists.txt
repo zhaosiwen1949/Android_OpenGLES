@@ -26,9 +26,8 @@ project("androidopengles")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        egl/WlEglHelper.h
         egl/WlEglHelper.cpp
-        log/WlAndroidLog.h
+        egl/WlEglThread.cpp
         native-lib.cpp)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE

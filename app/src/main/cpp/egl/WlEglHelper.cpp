@@ -53,7 +53,7 @@ int WlEglHelper::initEgl(EGLNativeWindowType window) {
     }
     LOGD(TAG, "Egl has %d config", num_config)
 
-    if(!eglChooseConfig(mEglDisplay, displayAttribs, &mEglConfig, 1, NULL))
+    if(!eglChooseConfig(mEglDisplay, displayAttribs, &mEglConfig, 1, &num_config))
     {
         LOGE(TAG, "egl get config failed!")
         return -1;
@@ -100,8 +100,9 @@ int WlEglHelper::swapBuffers() {
             LOGD(TAG, "egl swapBuffers success!")
             return 0;
         }
+        LOGE(TAG, "egl swapBuffers failed!")
     }
-    LOGE(TAG, "egl swapBuffers failed!")
+    LOGE(TAG, "egl has no EGL_DISPLAY or EGL_SURFACE!")
     return -1;
 }
 
@@ -114,7 +115,7 @@ int WlEglHelper::destroyEgl() {
     if(mEglDisplay != EGL_NO_DISPLAY && mEglSurface != EGL_NO_SURFACE)
     {
         eglDestroySurface(mEglDisplay, mEglSurface);
-        mEglSurface = EGL_NO_SURFACE
+        mEglSurface = EGL_NO_SURFACE;
     }
 
     if(mEglDisplay != EGL_NO_DISPLAY && mEglContext != EGL_NO_CONTEXT)
@@ -130,4 +131,8 @@ int WlEglHelper::destroyEgl() {
     }
 
     return 0;
+}
+
+WlEglHelper::~WlEglHelper() {
+
 }

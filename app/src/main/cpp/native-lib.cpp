@@ -3,14 +3,28 @@
 #include "EGL/egl.h"
 #include "GLES2/gl2.h"
 #include "android/native_window.h"
+#include "android/native_window_jni.h"
 
 #include "log/WlAndroidLog.h"
-#include "egl/WlEglHelper.h"
+#include "egl/WlEglThread.h"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_thinredline_androidopengles_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
+static ANativeWindow *_nativeWindow = nullptr;
+static WlEglThread *_eglThread = nullptr;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_thinredline_androidopengles_NativeOpenGL_surfaceCreate(JNIEnv *env, jobject thiz, jobject surface) {
+    _nativeWindow = ANativeWindow_fromSurface(env, surface);
+
+    _eglThread = new WlEglThread();
+    _eglThread->onSurfaceCreated(_nativeWindow);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_thinredline_androidopengles_NativeOpenGL_surfaceChange(JNIEnv *env, jobject thiz,
+                                                                jint width, jint height) {
+    if(_eglThread != nullptr)
+    {
+        _eglThread->onSurfaceChanged(width, height);
+    }
 }
